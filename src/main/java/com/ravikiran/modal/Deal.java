@@ -1,5 +1,6 @@
 package com.ravikiran.modal;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -8,56 +9,77 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "dealsoftheday")
 public class Deal {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
- @Id
- @GeneratedValue(strategy = GenerationType.AUTO)
- private Long id;
+    @OneToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
- @ManyToOne
- @JoinColumn(name = "product_id", nullable = false)
- private Product product;
+    @Column(name = "discount_percent")
+    private int discountPercent;
+    
+    @Column(name = "price")
+    private double price;
 
- @Column(name = "expiry_time")
- private LocalDateTime expiryTime;
+    @Column(name = "discounted_price")
+    private double discountedPrice;
 
- // Constructors, getters, setters, etc.
+    @Column(name = "expiry_time")
+    private LocalDateTime expiryTime;
 
- // Constructors, getters, setters, etc.
- public Deal() {
- }
+    public Long getId() {
+		return id;
+	}
 
- public Deal(Long id, Product product, LocalDateTime expiryTime) {
-     this.id = id;
-     this.product = product;
-     this.expiryTime = expiryTime;
- }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
- public Long getId() {
-     return id;
- }
+	public Product getProduct() {
+		return product;
+	}
 
- public void setId(Long id) {
-     this.id = id;
- }
+	public void setProduct(Product product) {
+		this.product = product;
+	}
 
- public Product getProduct() {
-     return product;
- }
+	public int getDiscountPercent() {
+		return discountPercent;
+	}
 
- public void setProduct(Product product) {
-     this.product = product;
- }
+	public void setDiscountPercent(int discountPercent) {
+		this.discountPercent = discountPercent;
+	}
 
- public LocalDateTime getExpiryTime() {
-     return expiryTime;
- }
+	public double getPrice() {
+		return price;
+	}
 
- public void setExpiryTime(LocalDateTime expiryTime) {
-     this.expiryTime = expiryTime;
- }
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public double getDiscountedPrice() {
+		return discountedPrice;
+	}
+
+	public void setDiscountedPrice(double discountedPrice) {
+		this.discountedPrice = discountedPrice;
+	}
+
+	public LocalDateTime getExpiryTime() {
+		return expiryTime;
+	}
+
+	public void setExpiryTime(LocalDateTime expiryTime) {
+		this.expiryTime = expiryTime;
+	}
 }
-

@@ -25,10 +25,11 @@ public class DealsServiceImplementation implements DealsService {
         // Find the product by ID
         Product product = productRepository.findById(req.getProductId())
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + req.getProductId()));
-
-        // Add the product to the deals table with expiry time
         Deal deal = new Deal();
         deal.setProduct(product);
+        deal.setDiscountedPrice(req.getDiscountedPrice());
+        deal.setPrice(req.getPrice());
+        deal.setDiscountPercent(req.getDiscountPercent());
         deal.setExpiryTime(req.getExpiryTime());
 
         return dealsRepository.save(deal);

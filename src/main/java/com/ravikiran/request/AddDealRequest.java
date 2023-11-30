@@ -1,15 +1,18 @@
 package com.ravikiran.request;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import jakarta.persistence.Column;
 
 public class AddDealRequest {
 	
 	private Long productId;
-	private LocalDateTime expiryTime;
+//	private LocalDateTime expiryTime;
+	private ZonedDateTime expiryTime;
     private int discountPercent;
     private double price;
+    private double discountedPrice;
     public int getDiscountPercent() {
 		return discountPercent;
 	}
@@ -28,7 +31,6 @@ public class AddDealRequest {
 	public void setDiscountedPrice(double discountedPrice) {
 		this.discountedPrice = discountedPrice;
 	}
-	private double discountedPrice;
 
 	public Long getProductId() {
 		return productId;
@@ -36,12 +38,19 @@ public class AddDealRequest {
 	public void setProductId(Long productId) {
 		this.productId = productId;
 	}
-	public LocalDateTime getExpiryTime() {
+	public ZonedDateTime getExpiryTime() {
 		return expiryTime;
 	}
-	public void setExpiryTime(LocalDateTime expiryTime) {
+	public void setExpiryTime(ZonedDateTime expiryTime) {
 		this.expiryTime = expiryTime;
 	}
+	
+//	public LocalDateTime getExpiryTime() {
+//		return expiryTime;
+//	}
+//	public void setExpiryTime(LocalDateTime expiryTime) {
+//		this.expiryTime = expiryTime;
+//	}
 
    
 }

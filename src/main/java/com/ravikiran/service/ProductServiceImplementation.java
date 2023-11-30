@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 
 import com.ravikiran.exception.ProductException;
 import com.ravikiran.modal.Category;
+import com.ravikiran.modal.Deal;
 import com.ravikiran.modal.Product;
 import com.ravikiran.repository.CategoryRepository;
+import com.ravikiran.repository.DealsRepository;
 import com.ravikiran.repository.ProductRepository;
 import com.ravikiran.request.CreateProductRequest;
 //import com.ravikiran.user.domain.ProductSubCategory;
@@ -24,13 +26,15 @@ import com.ravikiran.request.CreateProductRequest;
 public class ProductServiceImplementation implements ProductService {
 	
 	private ProductRepository productRepository;
+	private DealsRepository dealsRepository;
 	private UserService userService;
 	private CategoryRepository categoryRepository;
 	
-	public ProductServiceImplementation(ProductRepository productRepository,UserService userService,CategoryRepository categoryRepository) {
+	public ProductServiceImplementation(ProductRepository productRepository,UserService userService,CategoryRepository categoryRepository,DealsRepository dealsRepository) {
 		this.productRepository=productRepository;
 		this.userService=userService;
 		this.categoryRepository=categoryRepository;
+		this.dealsRepository = dealsRepository;
 	}
 	
 
@@ -131,11 +135,21 @@ public class ProductServiceImplementation implements ProductService {
 
 	@Override
 	public Product findProductById(Long id) throws ProductException {
-		Optional<Product> opt=productRepository.findById(id);
 		
-		if(opt.isPresent()) {
-			return opt.get();
+		Product product = productRepository.findById(id).orElse(null);
+		
+		if(dealsRepository.findByProductId(id).isPresent()) {
+			Deal deal = dealsRepository.findByProductId(id).orElse(null);
+			product.setDiscountPersent(deal.getDiscountPersent());
+			product.setPrice((int)deal.getPrice());
+			product.setDiscountedPrice((int)deal.getDiscountedPrice());
+			return product;
 		}
+			
+		
+		if (product != null) {
+	        return product;
+	    }
 		throw new ProductException("product not found with id "+id);
 	}
 
@@ -146,7 +160,11 @@ public class ProductServiceImplementation implements ProductService {
 		
 		List<Product> products = productRepository.findByCategory(category);
 		
-		return products;
+		List<Product> productsWithoutDeals = products.stream()
+		        .filter(p -> !dealsRepository.findByProductId(p.getId()).isPresent())
+		        .collect(Collectors.toList());
+		
+		return productsWithoutDeals;
 	}
 
 	@Override
@@ -188,11 +206,16 @@ public class ProductServiceImplementation implements ProductService {
 				
 					
 		}
+		
+		List<Product> productsWithoutDeals = products.stream()
+		        .filter(p -> !dealsRepository.findByProductId(p.getId()).isPresent())
+		        .collect(Collectors.toList());
+		
 		int startIndex = (int) pageable.getOffset();
-		int endIndex = Math.min(startIndex + pageable.getPageSize(), products.size());
+		int endIndex = Math.min(startIndex + pageable.getPageSize(), productsWithoutDeals.size());
 
-		List<Product> pageContent = products.subList(startIndex, endIndex);
-		Page<Product> filteredProducts = new PageImpl<>(pageContent, pageable, products.size());
+		List<Product> pageContent = productsWithoutDeals.subList(startIndex, endIndex);
+		Page<Product> filteredProducts = new PageImpl<>(pageContent, pageable, productsWithoutDeals.size());
 	    return filteredProducts; // If color list is empty, do nothing and return all products
 		
 		

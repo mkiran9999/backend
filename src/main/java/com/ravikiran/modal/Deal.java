@@ -162,6 +162,7 @@ public class Deal {
 		this.productId = productId;
 	}
 
+
 	public double getPrice() {
 		return price;
 	}
